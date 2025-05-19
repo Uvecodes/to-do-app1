@@ -5,6 +5,7 @@ const addTaskBtn = document.getElementById('addTaskBtn');
 const weekContainer = document.querySelector('.week-container');
 const weeklyProgressFill = document.getElementById('weeklyProgressFill');
 const weeklyProgressText = document.getElementById('weeklyProgressText');
+const recurringCheckbox = document.getElementById('recurringCheckbox');
 
 // Days of the week in order
 const DAYS_OF_WEEK = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
@@ -25,7 +26,7 @@ const themeToggle = document.getElementById('themeToggle');
 const themeIcon = themeToggle.querySelector('i');
 
 // Check for saved theme preference
-const savedTheme = localStorage.getItem('theme') || 'light';
+const savedTheme = localStorage.getItem('theme') || 'dark';
 document.documentElement.setAttribute('data-theme', savedTheme);
 updateThemeIcon(savedTheme);
 
@@ -46,7 +47,7 @@ function updateThemeIcon(theme) {
 // Create a new task element
 function createTaskElement(task, day) {
     const li = document.createElement('li');
-    li.className = `task-item ${task.completed ? 'completed' : ''}`;
+    li.className = `task-item ${task.completed ? 'completed' : ''} ${task.recurring ? 'recurring' : ''}`;
     
     const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
@@ -57,6 +58,13 @@ function createTaskElement(task, day) {
     const span = document.createElement('span');
     span.className = 'task-text';
     span.textContent = task.text;
+    if (task.recurring) {
+        const recurringIcon = document.createElement('i');
+        recurringIcon.className = 'fas fa-sync-alt';
+        recurringIcon.style.marginLeft = '8px';
+        recurringIcon.style.color = 'var(--primary-color)';
+        span.appendChild(recurringIcon);
+    }
 
     const deleteBtn = document.createElement('button');
     deleteBtn.className = 'delete-btn';
@@ -74,26 +82,52 @@ function createTaskElement(task, day) {
 function addTask() {
     const text = taskInput.value.trim();
     const day = daySelect.value;
+    const isRecurring = recurringCheckbox.checked;
 
     if (text) {
         const task = {
             id: Date.now(),
             text: text,
-            completed: false
+            completed: false,
+            recurring: isRecurring
         };
 
-        tasks[day].push(task);
+        if (isRecurring) {
+            // Add task to all days
+            DAYS_OF_WEEK.forEach(day => {
+                tasks[day].push({...task, id: Date.now() + Math.random()});
+            });
+        } else {
+            // Add task to selected day only
+            tasks[day].push(task);
+        }
+
         saveTasks();
         renderTasks();
         updateProgress();
         updatePastDays();
         taskInput.value = '';
+        recurringCheckbox.checked = false;
     }
 }
 
 // Delete a task
 function deleteTask(day, taskId) {
-    tasks[day] = tasks[day].filter(task => task.id !== taskId);
+    const task = tasks[day].find(t => t.id === taskId);
+    
+    if (task && task.recurring) {
+        // If it's a recurring task, ask for confirmation
+        if (confirm('This is a recurring task. Do you want to delete it from all days?')) {
+            // Delete from all days
+            DAYS_OF_WEEK.forEach(day => {
+                tasks[day] = tasks[day].filter(t => !t.recurring || t.id !== taskId);
+            });
+        }
+    } else {
+        // Delete from single day
+        tasks[day] = tasks[day].filter(t => t.id !== taskId);
+    }
+    
     saveTasks();
     renderTasks();
     updateProgress();
