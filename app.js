@@ -117,7 +117,7 @@ function deleteTask(day, taskId) {
     
     if (task && task.recurring) {
         // If it's a recurring task, ask for confirmation
-        if (confirm('This is a recurring task. Do you want to delete it from all days?')) {
+        if (confirm('This is a recurring task. Do you want to delete it?')) {
             // Delete from all days
             DAYS_OF_WEEK.forEach(day => {
                 tasks[day] = tasks[day].filter(t => !t.recurring || t.id !== taskId);
