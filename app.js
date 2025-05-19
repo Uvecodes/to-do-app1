@@ -148,13 +148,17 @@ function updatePastDays() {
             dayColumn.classList.remove('past-day-incomplete', 'past-day-complete');
             
             if (isPastDay(index)) {
-                if (areAllTasksCompleted(day)) {
-                    dayProgress.classList.add('past-day-complete');
-                    dayColumn.classList.add('past-day-complete');
-                } else {
-                    dayProgress.classList.add('past-day-incomplete');
-                    dayColumn.classList.add('past-day-incomplete');
+                const dayTasks = tasks[day];
+                if (dayTasks.length > 0) {
+                    if (areAllTasksCompleted(day)) {
+                        dayProgress.classList.add('past-day-complete');
+                        dayColumn.classList.add('past-day-complete');
+                    } else {
+                        dayProgress.classList.add('past-day-incomplete');
+                        dayColumn.classList.add('past-day-incomplete');
+                    }
                 }
+                // If there are no tasks, do not add any class
             }
         }
     });
