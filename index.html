@@ -6,63 +6,161 @@
     <title>Weekly To-Do App</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#3498db">
+    <meta name="theme-color" content="#2563eb">
     <meta name="description" content="A simple weekly task manager">
     <link rel="apple-touch-icon" href="icons/icon-192x192.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="container">
+    <!-- Auth Container (Commented out for now)
+    <div id="authContainer" class="auth-container">
+        <div class="auth-box">
+            <h2>Welcome to Weekly To-Do</h2>
+            <div class="auth-tabs">
+                <button class="auth-tab active" data-tab="login">Login</button>
+                <button class="auth-tab" data-tab="signup">Sign Up</button>
+            </div>
+            
+            <form id="loginForm" class="auth-form">
+                <div class="form-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" required>
+                </div>
+                <button type="submit" class="auth-btn">Login</button>
+            </form>
+
+            <form id="signupForm" class="auth-form hidden">
+                <div class="form-group">
+                    <label for="signupName">Full Name</label>
+                    <input type="text" id="signupName" required>
+                </div>
+                <div class="form-group">
+                    <label for="signupEmail">Email</label>
+                    <input type="email" id="signupEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="signupPassword">Password</label>
+                    <input type="password" id="signupPassword" required>
+                </div>
+                <button type="submit" class="auth-btn">Sign Up</button>
+            </form>
+        </div>
+    </div>
+    -->
+
+    <!-- Main App Container -->
+    <div id="appContainer" class="container">
         <header>
-            <h1>Weekly To-Do List</h1>
+            <div class="header-content">
+                <h1>Weekly To-Do List</h1>
+                <p class="subtitle">Organize your week efficiently</p>
+            </div>
+            <!-- User info (commented out for now)
+            <div class="user-info">
+                <span id="userName"></span>
+                <button id="logoutBtn" class="logout-btn">Logout</button>
+            </div>
+            -->
         </header>
         
+        <div class="progress-section">
+            <h2>Weekly Progress</h2>
+            <div class="progress-container">
+                <div class="overall-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="weeklyProgressFill"></div>
+                    </div>
+                    <span id="weeklyProgressText">0% Complete</span>
+                </div>
+                <div class="daily-progress">
+                    <div class="day-progress" id="sunday-progress">
+                        <span>Sun</span>
+                        <div class="progress-indicator"></div>
+                    </div>
+                    <div class="day-progress" id="monday-progress">
+                        <span>Mon</span>
+                        <div class="progress-indicator"></div>
+                    </div>
+                    <div class="day-progress" id="tuesday-progress">
+                        <span>Tue</span>
+                        <div class="progress-indicator"></div>
+                    </div>
+                    <div class="day-progress" id="wednesday-progress">
+                        <span>Wed</span>
+                        <div class="progress-indicator"></div>
+                    </div>
+                    <div class="day-progress" id="thursday-progress">
+                        <span>Thu</span>
+                        <div class="progress-indicator"></div>
+                    </div>
+                    <div class="day-progress" id="friday-progress">
+                        <span>Fri</span>
+                        <div class="progress-indicator"></div>
+                    </div>
+                    <div class="day-progress" id="saturday-progress">
+                        <span>Sat</span>
+                        <div class="progress-indicator"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="todo-container">
             <div class="add-task">
-                <select id="daySelect">
+                <select id="daySelect" required>
+                    <option value="sunday">Sunday</option>
                     <option value="monday">Monday</option>
                     <option value="tuesday">Tuesday</option>
                     <option value="wednesday">Wednesday</option>
                     <option value="thursday">Thursday</option>
                     <option value="friday">Friday</option>
                     <option value="saturday">Saturday</option>
-                    <option value="sunday">Sunday</option>
                 </select>
-                <input type="text" id="taskInput" placeholder="Add a new task...">
-                <button id="addTaskBtn">Add Task</button>
+                <input type="text" id="taskInput" placeholder="Add a new task..." aria-label="Task description">
+                <button id="addTaskBtn" aria-label="Add task">
+                    <span>Add Task</span>
+                </button>
             </div>
 
             <div class="week-container">
-                <div class="day-column" id="monday">
+                <div id="sunday" class="day-column">
+                    <h2>Sunday</h2>
+                    <ul class="task-list"></ul>
+                </div>
+                <div id="monday" class="day-column">
                     <h2>Monday</h2>
                     <ul class="task-list"></ul>
                 </div>
-                <div class="day-column" id="tuesday">
+                <div id="tuesday" class="day-column">
                     <h2>Tuesday</h2>
                     <ul class="task-list"></ul>
                 </div>
-                <div class="day-column" id="wednesday">
+                <div id="wednesday" class="day-column">
                     <h2>Wednesday</h2>
                     <ul class="task-list"></ul>
                 </div>
-                <div class="day-column" id="thursday">
+                <div id="thursday" class="day-column">
                     <h2>Thursday</h2>
                     <ul class="task-list"></ul>
                 </div>
-                <div class="day-column" id="friday">
+                <div id="friday" class="day-column">
                     <h2>Friday</h2>
                     <ul class="task-list"></ul>
                 </div>
-                <div class="day-column" id="saturday">
+                <div id="saturday" class="day-column">
                     <h2>Saturday</h2>
-                    <ul class="task-list"></ul>
-                </div>
-                <div class="day-column" id="sunday">
-                    <h2>Sunday</h2>
                     <ul class="task-list"></ul>
                 </div>
             </div>
         </div>
     </div>
+
     <script src="app.js"></script>
     <script>
         // Register service worker
