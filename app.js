@@ -85,17 +85,18 @@ function addTask() {
     const isRecurring = recurringCheckbox.checked;
 
     if (text) {
+        const taskId = Date.now();
         const task = {
-            id: Date.now(),
+            id: taskId,
             text: text,
             completed: false,
             recurring: isRecurring
         };
 
         if (isRecurring) {
-            // Add task to all days
+            // Add task to all days with the same ID
             DAYS_OF_WEEK.forEach(day => {
-                tasks[day].push({...task, id: Date.now() + Math.random()});
+                tasks[day].push({...task});
             });
         } else {
             // Add task to selected day only

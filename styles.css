@@ -765,4 +765,25 @@ header h1 {
 
 .form-group input.error:focus {
     box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+}
+
+.recurring-option {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    background-color: var(--bg-primary);
+    border-radius: var(--radius-md);
+}
+
+.recurring-option input[type="checkbox"] {
+    width: 1.25rem;
+    height: 1.25rem;
+    cursor: pointer;
+}
+
+.recurring-option label {
+    color: var(--text-primary);
+    font-size: 0.875rem;
+    cursor: pointer;
 } 
