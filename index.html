@@ -18,6 +18,9 @@
     <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
         <i class="fas fa-moon"></i>
     </button>
+    <button class="install-btn" id="installBtn" aria-label="Install app">
+        <i class="fas fa-download"></i> Install App
+    </button>
 
     <!-- Auth Container (Commented out for now)
     <div id="authContainer" class="auth-container">
@@ -175,15 +178,81 @@
         // Register service worker
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js')
+                // Try both absolute and relative paths
+                const swPath = window.location.protocol === 'file:' ? 'sw.js' : '/sw.js';
+                navigator.serviceWorker.register(swPath)
                     .then(registration => {
                         console.log('ServiceWorker registration successful');
                     })
                     .catch(err => {
                         console.log('ServiceWorker registration failed: ', err);
+                        // Try alternative path
+                        if (swPath === '/sw.js') {
+                            navigator.serviceWorker.register('./sw.js').catch(() => {});
+                        }
                     });
             });
         }
+
+        // PWA Install functionality
+        let deferredPrompt;
+        const installBtn = document.getElementById('installBtn');
+
+        // Check if app is already installed - hide button if so
+        if (window.matchMedia('(display-mode: standalone)').matches) {
+            installBtn.style.display = 'none';
+            console.log('App is already installed');
+        }
+
+        // Listen for beforeinstallprompt event (Chrome/Edge)
+        window.addEventListener('beforeinstallprompt', (e) => {
+            console.log('beforeinstallprompt event fired - app is installable');
+            // Prevent the mini-infobar from appearing on mobile
+            e.preventDefault();
+            // Stash the event so it can be triggered later
+            deferredPrompt = e;
+            // Ensure button is visible
+            installBtn.style.display = 'block';
+        });
+
+        // Handle install button click
+        installBtn.addEventListener('click', async () => {
+            if (deferredPrompt) {
+                // Show the install prompt
+                deferredPrompt.prompt();
+
+                // Wait for the user to respond to the prompt
+                const { outcome } = await deferredPrompt.userChoice;
+
+                console.log('User response to install prompt:', outcome);
+
+                if (outcome === 'accepted') {
+                    console.log('User accepted the install prompt');
+                } else {
+                    console.log('User dismissed the install prompt');
+                }
+
+                // Clear the deferredPrompt variable
+                deferredPrompt = null;
+            } else {
+                console.log('Install prompt not available. PWA criteria may not be met.');
+                console.log('Make sure you have:');
+                console.log('- Valid manifest.json with icons');
+                console.log('- Service worker registered');
+                console.log('- Serving over HTTPS (or localhost HTTP)');
+                alert('Install not available. Please ensure:\n- Icons exist (192x192 and 512x512 PNG)\n- Service worker is registered\n- Accessing via HTTP/HTTPS (not file://)');
+            }
+        });
+
+        // Hide install button after app is installed
+        window.addEventListener('appinstalled', () => {
+            console.log('PWA was installed');
+            installBtn.style.display = 'none';
+            deferredPrompt = null;
+        });
+
+        // Debug: Log installability status
+        console.log('Install button initialized. Waiting for beforeinstallprompt event...');
     </script>
 </body>
 </html> 

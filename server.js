@@ -6,19 +6,40 @@ const cors = require('cors');
 
 const app = express();
 
-// Middleware
-app.use(cors());
+// Completely permissive CORS - allow everything
+app.use(cors({
+    origin: '*',
+    methods: '*',
+    allowedHeaders: '*',
+    credentials: false
+}));
+
+// Set permissive headers for all responses
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.header('Access-Control-Allow-Headers', '*');
+    res.header('Access-Control-Expose-Headers', '*');
+    res.header('X-Content-Type-Options', 'nosniff');
+    if (req.method === 'OPTIONS') {
+        return res.sendStatus(200);
+    }
+    next();
+});
+
 app.use(express.json());
 
-// MongoDB connection with error handling
+// Serve static files from root directory - THIS MUST BE FIRST
+app.use(express.static(__dirname));
+
+// MongoDB connection - optional, don't crash if it fails
 mongoose.connect('mongodb://127.0.0.1:27017/todo-app', {
     useNewUrlParser: true,
     useUnifiedTopology: true
 })
 .then(() => console.log('Connected to MongoDB'))
 .catch(err => {
-    console.error('MongoDB connection error:', err);
-    process.exit(1);
+    console.warn('MongoDB connection failed (server will continue without DB):', err.message);
 });
 
 // User Schema
